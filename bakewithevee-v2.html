@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BakeWithEvee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #111110;
+  --grey: #888884;
+  --light-grey: #c8c8c4;
+  --border: #e0e0dc;
+  --bg: #f8f8f6;
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 22px 32px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+}
+
+.nav-brand {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 11px;
+  color: var(--grey);
+  letter-spacing: 0.06em;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover { color: var(--black); }
+
+/* HERO — full bleed image, nothing on top */
+.hero {
+  padding-top: 60px;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-img-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hero-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.97);
+}
+
+.hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--light-grey);
+}
+
+.hero-placeholder span {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-caption {
+  position: absolute;
+  bottom: 28px;
+  right: 32px;
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.1em;
+  mix-blend-mode: difference;
+}
+
+/* SHARED LAYOUT */
+.row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0 60px;
+  padding: 72px 32px;
+  border-top: 1px solid var(--border);
+}
+
+.row-label {
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  padding-top: 2px;
+}
+
+/* MENU */
+.menu-list {
+  list-style: none;
+  margin-bottom: 48px;
+}
+
+.menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.menu-list li:first-child { border-top: 1px solid var(--border); }
+
+.menu-list li:hover { color: var(--grey); }
+
+.menu-num {
+  font-size: 10px;
+  color: var(--light-grey);
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.menu-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  flex: 1;
+}
+
+.menu-name-en {
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 0.06em;
+}
+
+.menu-arrow {
+  font-size: 10px;
+  color: var(--light-grey);
+  transition: transform 0.2s, color 0.15s;
+}
+
+.menu-list li:hover .menu-arrow {
+  transform: translateX(4px);
+  color: var(--grey);
+}
+
+/* MENU DETAIL — shown when a bread is clicked */
+.menu-detail {
+  display: none;
+  margin-top: 0;
+}
+
+.menu-detail.active { display: block; }
+
+.detail-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.detail-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.detail-close {
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.detail-close:hover { color: var(--black); }
+
+.detail-photos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.detail-photo {
+  aspect-ratio: 4/5;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-photo span {
+  font-size: 9px;
+  color: var(--light-grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.detail-desc {
+  font-size: 11px;
+  color: var(--grey);
+  line-height: 1.85;
+  max-width: 420px;
+  margin-bottom: 20px;
+}
+
+.detail-note {
+  font-size: 10px;
+  color: var(--light-grey);
+  letter-spacing: 0.04em;
+}
+
+/* ABOUT */
+.about-text {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--grey);
+  max-width: 480px;
+}
+
+.about-text p { margin-bottom: 18px; }
+.about-text p:last-child { margin-bottom: 0; }
+
+/* GALLERY */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.gallery-cell {
+  aspect-ratio: 1;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.gallery-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.gallery-cell img:hover { opacity: 0.9; }
+
+.gallery-cell span {
+  font-size: 9px;
+  color: var(--light-grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gallery-num {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 9px;
+  color: rgba(255,255,255,0.6);
+}
+
+.customer-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+}
+
+/* ORDER / DETAILS */
+.order-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.order-intro {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--grey);
+  margin-bottom: 28px;
+}
+
+.process-list {
+  list-style: none;
+  margin-bottom: 40px;
+}
+
+.process-list li {
+  display: flex;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--grey);
+  line-height: 1.7;
+}
+
+.process-list li:first-child { border-top: 1px solid var(--border); }
+
+.p-num {
+  color: var(--light-grey);
+  flex-shrink: 0;
+  width: 20px;
+  padding-top: 1px;
+}
+
+.order-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.order-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--grey);
+  letter-spacing: 0.04em;
+  transition: color 0.15s;
+}
+
+.order-link:hover { color: var(--black); }
+
+.order-aside {
+  padding-top: 2px;
+}
+
+.aside-heading {
+  font-family: 'EB Garamond', serif;
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--black);
+  margin-bottom: 20px;
+}
+
+.aside-note {
+  font-size: 11px;
+  color: var(--grey);
+  line-height: 1.85;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 22px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+}
+
+.footer-copy {
+  font-size: 10px;
+  color: var(--light-grey);
+  letter-spacing: 0.04em;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-size: 10px;
+  color: var(--grey);
+  letter-spacing: 0.06em;
+  transition: color 0.15s;
+}
+
+.footer-links a:hover { color: var(--black); }
+
+/* MOBILE */
+@media (max-width: 640px) {
+  nav { padding: 18px 20px; }
+  .nav-links { gap: 20px; }
+  .row { grid-template-columns: 1fr; gap: 20px; padding: 48px 20px; }
+  .row-label { display: none; }
+  .detail-photos { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .order-content { grid-template-columns: 1fr; gap: 40px; }
+  footer { flex-direction: column; gap: 14px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">BakeWithEvee</span>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#order">Order</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-img-wrap">
+    <div class="hero-placeholder">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="0.8">
+        <rect x="2" y="2" width="28" height="28" rx="1"/>
+        <circle cx="10" cy="11" r="3"/>
+        <polyline points="30 22 22 14 8 28"/>
+      </svg>
+      <span>Hero photo</span>
+    </div>
+    <div class="hero-caption">BakeWithEvee · Est. 2022</div>
+  </div>
+</div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="row">
+    <div class="row-label">Menu</div>
+    <div>
+      <ul class="menu-list" id="menuList">
+        <li onclick="openDetail('sourdough')">
+          <span class="menu-num">01.</span>
+          <span class="menu-name">Sourdough <span class="menu-name-en"></span></span>
+          <span class="menu-arrow">→</span>
+        </li>
+        <li onclick="openDetail('bagel')">
+          <span class="menu-num">02.</span>
+          <span class="menu-name">Bagel</span>
+          <span class="menu-arrow">→</span>
+        </li>
+        <li onclick="openDetail('scones')">
+          <span class="menu-num">03.</span>
+          <span class="menu-name">Scones</span>
+          <span class="menu-arrow">→</span>
+        </li>
+        <li onclick="openDetail('focaccia')">
+          <span class="menu-num">04.</span>
+          <span class="menu-name">Focaccia</span>
+          <span class="menu-arrow">→</span>
+        </li>
+        <li onclick="openDetail('baguette')">
+          <span class="menu-num">05.</span>
+          <span class="menu-name">Baguette</span>
+          <span class="menu-arrow">→</span>
+        </li>
+        <li onclick="openDetail('shokupan')">
+          <span class="menu-num">06.</span>
+          <span class="menu-name">Shokupan <span class="menu-name-en">食パン</span></span>
+          <span class="menu-arrow">→</span>
+        </li>
+      </ul>
+
+      <!-- SOURDOUGH DETAIL -->
+      <div class="menu-detail" id="detail-sourdough">
+        <div class="detail-header">
+          <span class="detail-name">Sourdough</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Made with Japanese bread flour and a live starter. Long slow ferment, open crumb, crisp crust. The flavours we offer change every week — follow our Instagram Stories every Wednesday to see what's on.</p>
+        <p class="detail-note">Available weekly · Flavours vary each batch</p>
+      </div>
+
+      <!-- BAGEL DETAIL -->
+      <div class="menu-detail" id="detail-bagel">
+        <div class="detail-header">
+          <span class="detail-name">Bagel</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Boiled then baked. Chewy inside, lightly crisp outside. Rotating flavours every week.</p>
+        <p class="detail-note">Available weekly · Flavours vary each batch</p>
+      </div>
+
+      <!-- SCONES DETAIL -->
+      <div class="menu-detail" id="detail-scones">
+        <div class="detail-header">
+          <span class="detail-name">Scones</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Buttery, crumbly, proper texture. Good with jam, better plain.</p>
+        <p class="detail-note">Available weekly · Flavours vary each batch</p>
+      </div>
+
+      <!-- FOCACCIA DETAIL -->
+      <div class="menu-detail" id="detail-focaccia">
+        <div class="detail-header">
+          <span class="detail-name">Focaccia</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Thick, airy, soaked in olive oil. Toppings rotate every week depending on what's in season.</p>
+        <p class="detail-note">Available weekly · Toppings vary each batch</p>
+      </div>
+
+      <!-- BAGUETTE DETAIL -->
+      <div class="menu-detail" id="detail-baguette">
+        <div class="detail-header">
+          <span class="detail-name">Baguette</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Thin crust, soft inside. The kind you tear rather than slice.</p>
+        <p class="detail-note">Available weekly</p>
+      </div>
+
+      <!-- SHOKUPAN DETAIL -->
+      <div class="menu-detail" id="detail-shokupan">
+        <div class="detail-header">
+          <span class="detail-name">Shokupan 食パン</span>
+          <span class="detail-close" onclick="closeDetail()">← Back to menu</span>
+        </div>
+        <div class="detail-photos">
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+          <div class="detail-photo"><span>Photo</span></div>
+        </div>
+        <p class="detail-desc">Japanese milk bread. Soft, pillowy, slightly sweet. A totally different texture from everything else we make. Made with Japanese flour for that proper shokupan pull.</p>
+        <p class="detail-note">Available weekly</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="row">
+    <div class="row-label">Gallery</div>
+    <div>
+      <div class="gallery-grid">
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">01.</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">02.</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">03.</span>
+          <span class="customer-badge">Customer</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">04.</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">05.</span>
+          <span class="customer-badge">Customer</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">06.</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">07.</span>
+          <span class="customer-badge">Customer</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">08.</span>
+        </div>
+        <div class="gallery-cell">
+          <span>Photo</span>
+          <span class="gallery-num">09.</span>
+          <span class="customer-badge">Customer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="row">
+    <div class="row-label">About</div>
+    <div class="about-text">
+      <p>BakeWithEvee started in 2022. No storefront, no walk-ins — just weekly pre-order batches made from scratch at home.</p>
+      <p>Everything is made with Japanese-imported flour. The quality is genuinely different from what you get locally. Better protein structure, finer milling — it shows up in the crust and the crumb.</p>
+      <p>The menu changes slightly every week. Some weeks it's more sourdough-heavy, some weeks there are specials. We announce what's available every Wednesday on Instagram Stories, and orders open every Sunday.</p>
+      <p>From flour, water and salt — through patience, time, skill and love — bring it all together. BakeWithEvee is born.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER -->
+<section id="order">
+  <div class="row">
+    <div class="row-label">Order</div>
+    <div class="order-content">
+      <div>
+        <p class="order-intro">Pre-order only. All items are made to order — nothing sits on a shelf waiting.</p>
+        <ul class="process-list">
+          <li><span class="p-num">01.</span><span>Check our Instagram Stories every Wednesday. That's when we post what's available for the week.</span></li>
+          <li><span class="p-num">02.</span><span>Orders open every Sunday. Message us on WhatsApp with what you want.</span></li>
+          <li><span class="p-num">03.</span><span>We confirm your order and send payment details.</span></li>
+          <li><span class="p-num">04.</span><span>Baked fresh. We'll message you when it's ready to collect.</span></li>
+        </ul>
+        <div class="order-links">
+          <a href="https://wa.me/601155573628" target="_blank" class="order-link">WhatsApp →</a>
+          <a href="https://instagram.com/bakewithevee" target="_blank" class="order-link">Instagram →</a>
+        </div>
+      </div>
+      <div class="order-aside">
+        <p class="aside-heading">"From flour, water and salt — bring it all together."</p>
+        <p class="aside-note">Based in Miri, Sarawak. Est. 2022. Using Japanese-imported flour. No additives, no shortcuts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand">BakeWithEvee</span>
+  <span class="footer-copy">Est. 2022 · Pre-order only · Miri, Sarawak</span>
+  <div class="footer-links">
+    <a href="https://instagram.com/bakewithevee" target="_blank">Instagram</a>
+    <a href="https://wa.me/601155573628" target="_blank">WhatsApp</a>
+  </div>
+</footer>
+
+<script>
+function openDetail(id) {
+  // hide list, show detail
+  document.getElementById('menuList').style.display = 'none';
+  document.querySelectorAll('.menu-detail').forEach(d => d.classList.remove('active'));
+  document.getElementById('detail-' + id).classList.add('active');
+  // scroll to menu section
+  document.getElementById('menu').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeDetail() {
+  document.getElementById('menuList').style.display = 'block';
+  document.querySelectorAll('.menu-detail').forEach(d => d.classList.remove('active'));
+}
+</script>
+
+</body>
+</html>
